@@ -9,7 +9,7 @@ import java.awt.*;
  * Provides human readable movement methods, and allows the user to
  * store the motor speed and move durations.
  */
-public class FinchController {
+class FinchController {
 
     public Finch finch;
 
@@ -131,5 +131,22 @@ public class FinchController {
      */
     public void setMovementTime(int movementTime) {
         this.movementTime = movementTime;
+    }
+}
+
+/**
+ * Provides a shutdown hook to call the Finch's quit method to
+ * properly close the connection.
+ */
+class FinchShutdownHook extends Thread {
+
+    private final Finch finch;
+
+    public FinchShutdownHook(Finch finch) {
+        this.finch = finch;
+    }
+
+    public void run() {
+        finch.quit();
     }
 }

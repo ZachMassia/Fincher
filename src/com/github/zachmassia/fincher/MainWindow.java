@@ -13,22 +13,33 @@ public class MainWindow {
     private JCheckBox enableAutopilotCheckBox;
     private JButton quitButton;
     private JPanel mainPanel;
+    @SuppressWarnings("unused")
     private JPanel optionsPanel;
+    @SuppressWarnings("unused")
     private JPanel sensorReadoutPanel;
 
 
-    FinchController bot = new FinchController();
+    private static FinchController bot;
 
     public static void main(String[] args) {
-        // Set up window
-        JFrame frame = new JFrame("MainWindow");
-        frame.setContentPane(new MainWindow().mainPanel);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setFocusable(true);
-        frame.setVisible(true);
 
-        //bot.connectToFinch();
+        // Set up the GUI
+        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                JFrame frame = new JFrame("Fincher");
+                frame.setContentPane(new MainWindow().mainPanel);
+                frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+                frame.pack();
+                frame.setFocusable(true);
+                frame.setVisible(true);
+            }
+        });
+
+        // Set up Finch
+        bot = new FinchController();
+        bot.connectToFinch();
+        Runtime.getRuntime().addShutdownHook(new FinchShutdownHook(bot.finch));
     }
 
     public MainWindow() {
@@ -37,7 +48,7 @@ public class MainWindow {
         quitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.exit(0);
+                System.exit(WindowConstants.EXIT_ON_CLOSE);
             }
         });
 
@@ -63,7 +74,7 @@ public class MainWindow {
             public void stateChanged(ChangeEvent e) {
                 // Only update after user is done moving slider
                 if (!speedSlider.getValueIsAdjusting()) {
-                    int newSpeed = (int)speedSlider.getValue();
+                    int newSpeed = speedSlider.getValue();
                     bot.setMovementSpeed(newSpeed);
                 }
             }
