@@ -1,1 +1,4 @@
 finch.log
+
+# Ignore error logs
+hs_err_pid*
